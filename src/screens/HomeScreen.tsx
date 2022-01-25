@@ -1,6 +1,7 @@
 import React from 'react';
-import { ActivityIndicator, FlatList, Image, Text } from "react-native";
+import { ActivityIndicator, FlatList, Image, Text, View} from "react-native";
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { PokemonCard } from '../components/PokemonCard';
 import { usePokemonPaginated } from '../hooks/usePokemonPaginated';
 import { styles } from '../theme/appTheme';
 
@@ -15,33 +16,29 @@ export const HomeScreen = () => {
                 source={ require('../assets/pokebola.png') }
                 style={ styles.pokeballBg }
             />
-            {/* <Text style={{ ...styles.title, ...styles.globalMargin, top: top + 20  }}> Pokedex </Text> */}
-            <FlatList 
-                data={ simplePokemonList }
-                keyExtractor={ (pokemon) => pokemon.id }
-                renderItem={ ({ item }) => (
-                    <Image 
-                        source={{ uri: item.picture }}
-                        style={{
-                            width: 100,
-                            height: 100,
-                        }}
-                    />
-                )}
+            <View
+                style={{ alignItems: 'center' }}
+            >
+                <FlatList 
+                    data={ simplePokemonList }
+                    keyExtractor={ (pokemon) => pokemon.id }
+                    numColumns={ 2 }
+                    renderItem={ ({ item }) => (<PokemonCard pokemon={ item }/> )}
+                    ListHeaderComponent={( <Text style={{ ...styles.title, ...styles.globalMargin, marginBottom: top + 20, top: top + 20, paddingBottom: 10 }}> Pokedex </Text> )}
+                    showsVerticalScrollIndicator={ false }
 
-                showsVerticalScrollIndicator={ false }
+                    onEndReached={ loadPokemons }
+                    onEndReachedThreshold={ 0.4 }
 
-                onEndReached={ loadPokemons }
-                onEndReachedThreshold={ 0.4 }
-
-                ListFooterComponent={( 
-                    <ActivityIndicator 
-                        style={{ height: 100 }}
-                        size={ 20 }
-                        color='grey'
-                    />
-                )}
-            />
+                    ListFooterComponent={( 
+                        <ActivityIndicator 
+                            style={{ height: 100 }}
+                            size={ 20 }
+                            color='grey'
+                        />
+                    )}
+                />
+            </View>
         </>
     );
 };
