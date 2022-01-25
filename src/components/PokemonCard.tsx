@@ -4,6 +4,7 @@ import { SimplePokemon } from '../interfaces/pokemonInterfaces';
 import { FadeInImage } from "./FadeInImage";
 import { useState, useEffect } from 'react';
 import ImageColors from 'react-native-image-colors';
+import { useNavigation } from '@react-navigation/native';
 
 const windowWidth = Dimensions.get('window').width;
 
@@ -15,16 +16,17 @@ export const PokemonCard = ( { pokemon }: Props ) => {
 
     const [ bgColor, setBgColor ] = useState('grey');
     const isMounted = useRef(true);
+    const navigator = useNavigation();
 
     useEffect(() => {
 
         ImageColors.getColors( pokemon.picture, { fallback: 'grey' } )
             .then( colors => {
                 if( !isMounted.current ) return;
-                
+
                 switch (colors.platform) {
                     case 'android':
-                        setBgColor(colors.muted || 'grey');
+                        setBgColor(colors.dominant || 'grey');
                         break
                     case 'web':
                         setBgColor(colors.dominant || 'grey' );
@@ -45,6 +47,7 @@ export const PokemonCard = ( { pokemon }: Props ) => {
   return (
       <TouchableOpacity
         activeOpacity={ 0.9 }
+        onPress={ () => navigator.navigate('PokemonScreen' as never, {simplePokemon: pokemon, color: bgColor} as never)}
       >
         <View style={{
             ...styles.cardContainer,
@@ -52,7 +55,7 @@ export const PokemonCard = ( { pokemon }: Props ) => {
             backgroundColor: bgColor
         }}>
             <View>
-                <Text style={ styles.name }>{ pokemon.name } { '\n#' + pokemon.id }</Text>
+                <Text style={ styles.name }>{ pokemon.name.toUpperCase() } { '\n#' + pokemon.id }</Text>
             </View>
             <View
                 style={ styles.pokeballContainer }
@@ -91,7 +94,7 @@ const styles = StyleSheet.create({
     },
     name:{
         color:'white',
-        fontSize: 20,
+        fontSize: 15,
         fontWeight: 'bold',
         top: 20,
         left: 10
@@ -104,10 +107,10 @@ const styles = StyleSheet.create({
         bottom: -25,
     },
     pokemonImage:{
-        width: 120,
-        height: 120,
+        width: 95,
+        height: 95,
         position: 'absolute',
-        right: -5,
+        alignSelf: 'center',
         bottom: -5
     },
     pokeballContainer:{
